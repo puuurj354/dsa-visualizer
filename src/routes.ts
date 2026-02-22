@@ -1,33 +1,100 @@
+
+
+import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router';
 import { Layout } from './components/Layout';
-import { Home } from './pages/Home';
-import { Variables } from './pages/basics/Variables';
-import { ForLoop } from './pages/basics/ForLoop';
-import { IfElse } from './pages/basics/IfElse';
-import { Functions } from './pages/basics/Functions';
-import { ArraysSlices } from './pages/ds/ArraysSlices';
-import { Maps } from './pages/ds/Maps';
-import { Stack } from './pages/ds/Stack';
-import { Queue } from './pages/ds/Queue';
-import { LinkedList } from './pages/ds/LinkedList';
-import { BinarySearchTree } from './pages/ds/BinarySearchTree';
-import { BubbleSort } from './pages/algorithms/BubbleSort';
-import { BinarySearch } from './pages/algorithms/BinarySearch';
-import { Goroutines } from './pages/concurrency/Goroutines';
-import { Channels } from './pages/concurrency/Channels';
-import { BufferedChannels } from './pages/concurrency/BufferedChannels';
-import { WaitGroup } from './pages/concurrency/WaitGroup';
-import { Mutex } from './pages/concurrency/Mutex';
-import { Select } from './pages/concurrency/Select';
-import { Pointers } from './pages/basics/Pointers';
-import { DeferPanicRecover } from './pages/basics/DeferPanicRecover';
-import { GoroutineScheduler } from './pages/concurrency/GoroutineScheduler';
-import { Interfaces } from './pages/basics/Interfaces';
-import { SyncOnce } from './pages/concurrency/SyncOnce';
-import { ContextCancel } from './pages/concurrency/ContextCancel';
-import { MergeSort } from './pages/algorithms/MergeSort';
-import { RWMutex } from './pages/concurrency/RWMutex';
-import { ErrorWrapping } from './pages/basics/ErrorWrapping';
+
+
+const Home = lazy(() =>
+  import('./pages/Home').then(m => ({ default: m.Home }))
+);
+const Variables = lazy(() =>
+  import('./pages/basics/Variables').then(m => ({ default: m.Variables }))
+);
+const ForLoop = lazy(() =>
+  import('./pages/basics/ForLoop').then(m => ({ default: m.ForLoop }))
+);
+const IfElse = lazy(() =>
+  import('./pages/basics/IfElse').then(m => ({ default: m.IfElse }))
+);
+const Functions = lazy(() =>
+  import('./pages/basics/Functions').then(m => ({ default: m.Functions }))
+);
+const Pointers = lazy(() =>
+  import('./pages/basics/Pointers').then(m => ({ default: m.Pointers }))
+);
+const DeferPanicRecover = lazy(() =>
+  import('./pages/basics/DeferPanicRecover').then(m => ({ default: m.DeferPanicRecover }))
+);
+const Interfaces = lazy(() =>
+  import('./pages/basics/Interfaces').then(m => ({ default: m.Interfaces }))
+);
+const ErrorWrapping = lazy(() =>
+  import('./pages/basics/ErrorWrapping').then(m => ({ default: m.ErrorWrapping }))
+);
+
+
+const ArraysSlices = lazy(() =>
+  import('./pages/ds/ArraysSlices').then(m => ({ default: m.ArraysSlices }))
+);
+const Maps = lazy(() =>
+  import('./pages/ds/Maps').then(m => ({ default: m.Maps }))
+);
+const Stack = lazy(() =>
+  import('./pages/ds/Stack').then(m => ({ default: m.Stack }))
+);
+const Queue = lazy(() =>
+  import('./pages/ds/Queue').then(m => ({ default: m.Queue }))
+);
+const LinkedList = lazy(() =>
+  import('./pages/ds/LinkedList').then(m => ({ default: m.LinkedList }))
+);
+const BinarySearchTree = lazy(() =>
+  import('./pages/ds/BinarySearchTree').then(m => ({ default: m.BinarySearchTree }))
+);
+
+
+const BubbleSort = lazy(() =>
+  import('./pages/algorithms/BubbleSort').then(m => ({ default: m.BubbleSort }))
+);
+const BinarySearch = lazy(() =>
+  import('./pages/algorithms/BinarySearch').then(m => ({ default: m.BinarySearch }))
+);
+const MergeSort = lazy(() =>
+  import('./pages/algorithms/MergeSort').then(m => ({ default: m.MergeSort }))
+);
+
+
+const Goroutines = lazy(() =>
+  import('./pages/concurrency/Goroutines').then(m => ({ default: m.Goroutines }))
+);
+const Channels = lazy(() =>
+  import('./pages/concurrency/Channels').then(m => ({ default: m.Channels }))
+);
+const BufferedChannels = lazy(() =>
+  import('./pages/concurrency/BufferedChannels').then(m => ({ default: m.BufferedChannels }))
+);
+const WaitGroup = lazy(() =>
+  import('./pages/concurrency/WaitGroup').then(m => ({ default: m.WaitGroup }))
+);
+const Mutex = lazy(() =>
+  import('./pages/concurrency/Mutex').then(m => ({ default: m.Mutex }))
+);
+const Select = lazy(() =>
+  import('./pages/concurrency/Select').then(m => ({ default: m.Select }))
+);
+const GoroutineScheduler = lazy(() =>
+  import('./pages/concurrency/GoroutineScheduler').then(m => ({ default: m.GoroutineScheduler }))
+);
+const SyncOnce = lazy(() =>
+  import('./pages/concurrency/SyncOnce').then(m => ({ default: m.SyncOnce }))
+);
+const ContextCancel = lazy(() =>
+  import('./pages/concurrency/ContextCancel').then(m => ({ default: m.ContextCancel }))
+);
+const RWMutex = lazy(() =>
+  import('./pages/concurrency/RWMutex').then(m => ({ default: m.RWMutex }))
+);
 
 export const router = createBrowserRouter([
   {
