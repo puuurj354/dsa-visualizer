@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface QueueState {
   items: number[];
@@ -57,6 +58,17 @@ const steps: Step<QueueState>[] = [
 
 const itemColors = ['#00ACD7', '#3fb950', '#ffa657', '#d2a8ff', '#79c0ff', '#f85149'];
 
+/** Queue complexity: Enqueue O(1), Dequeue O(n) with slice, O(1) with linked list */
+const queueComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(1)', // Enqueue (append to back) is always O(1)
+    average: 'O(n)', // Dequeue with s[1:] requires shifting all elements
+    worst: 'O(n)', // Dequeue worst-case with large queues
+  },
+  space: 'O(n)',    // Grows linearly with elements in the queue
+  notes: 'Use container/list for O(1) Dequeue. Slice Dequeue is O(n).',
+};
+
 export function Queue() {
   return (
     <VisualizationLayout
@@ -66,6 +78,7 @@ export function Queue() {
       tagColor="bg-[#79c0ff]"
       steps={steps}
       codeLines={codeLines}
+      complexity={queueComplexity}
       renderVisual={(state: QueueState) => (
         <div className="w-full max-w-xl space-y-5">
           {/* Queue horizontal visualization */}

@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface LLNode { val: number; id: number }
 interface LLState {
@@ -74,6 +75,17 @@ const steps: Step<LLState>[] = [
   { description: 'Node 20 is unlinked and garbage collected. List is now: 10 → 30 → nil', highlightLines: [49], state: { nodes: [{ val: 10, id: 1 }, { val: 30, id: 3 }] } },
 ];
 
+/** Linked List complexity: search/append O(n), prepend O(1) */
+const linkedListComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(1)', // Prepend to head is O(1)
+    average: 'O(n)', // Search and append (tail) require traversal
+    worst: 'O(n)', // Linear scan for delete/search
+  },
+  space: 'O(n)',    // One pointer per node — scales with length
+  notes: 'Prepend is O(1). Append and Delete require O(n) traversal.',
+};
+
 export function LinkedList() {
   return (
     <VisualizationLayout
@@ -83,6 +95,7 @@ export function LinkedList() {
       tagColor="bg-[#79c0ff]"
       steps={steps}
       codeLines={codeLines}
+      complexity={linkedListComplexity}
       renderVisual={(state: LLState) => (
         <div className="w-full space-y-6">
           <p className="text-[#8b949e] text-xs uppercase tracking-wide">Linked List</p>

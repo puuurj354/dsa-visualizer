@@ -1,4 +1,6 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
+import type { EditableInputConfig } from '../../components/EditableInputPanel';
 
 interface SortState {
   arr: number[];
@@ -38,8 +40,17 @@ const codeLines = [
   '}',
 ];
 
-function generateSteps(): Step<SortState>[] {
-  const initial = [64, 34, 25, 12, 22];
+/**
+ * generateSteps
+ * Builds the full step sequence for Bubble Sort given an initial array.
+ * Accepts a custom array so the editable input feature can regenerate
+ * steps without modifying the core algorithm logic.
+ *
+ * @param initial - The unsorted array to visualize
+ * @returns       - Array of Step<SortState> for the VisualizationLayout
+ */
+function generateSteps(initial: number[]): Step<SortState>[] {
+
   const steps: Step<SortState>[] = [];
   const arr = [...initial];
   const sorted: number[] = [];
@@ -98,7 +109,60 @@ function generateSteps(): Step<SortState>[] {
   return steps;
 }
 
-const steps = generateSteps();
+// ─── Default steps (hardcoded initial array) ──────────────────
+const DEFAULT_INITIAL = [64, 34, 25, 12, 22]; // Default dataset shown on first load
+const defaultSteps = generateSteps(DEFAULT_INITIAL);
+
+// ─── Complexity info for the Complexity Card ──────────────────
+const bubbleSortComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(n)',   // Already sorted — only one pass needed
+    average: 'O(n²)', // Average case: many comparisons and swaps
+    worst: 'O(n²)', // Reverse-sorted array
+  },
+  space: 'O(1)',      // In-place sort: only a few variables extra
+  notes: 'Early exit optimization: stops if no swaps in a pass.',
+};
+
+// ─── Editable Input Configuration ─────────────────────────────
+const bubbleSortInput: EditableInputConfig<SortState> = {
+  label: 'Custom array:',
+  placeholder: 'e.g. 64, 34, 25, 12, 22',
+
+  /**
+   * validate — ensures the raw input is a comma-separated list of
+   * integers between 1 and 999, with at most 10 elements.
+   * Returns null if valid, or an error message string if invalid.
+   *
+   * @param raw - The raw string from the input field
+   * @returns   - Error message | null
+   */
+  validate(raw: string): string | null {
+    const parts = raw.split(',').map(s => s.trim()).filter(Boolean); // Split and clean
+    if (parts.length < 2) return 'Enter at least 2 numbers.';         // Min 2 for comparison
+    if (parts.length > 10) return 'Maximum 10 elements allowed.';      // Keep visual manageable
+    for (const p of parts) {
+      const n = Number(p);
+      if (!Number.isInteger(n) || n < 1 || n > 999) {                 // Strict integer check
+        return `"${p}" is not a valid integer (1–999).`;
+      }
+    }
+    return null; // All checks passed
+  },
+
+  /**
+   * generateSteps — converts the validated input string into steps.
+   * Re-uses the core generateSteps function so the algorithm logic
+   * is never duplicated.
+   *
+   * @param raw - Valid comma-separated integer string
+   * @returns   - Step<SortState>[] for the new custom input
+   */
+  generateSteps(raw: string): Step<SortState>[] {
+    const arr = raw.split(',').map(s => parseInt(s.trim(), 10)); // Parse integers
+    return generateSteps(arr);                                    // Re-use core logic
+  },
+};
 
 const MAX_VAL = 70;
 
@@ -109,8 +173,11 @@ export function BubbleSort() {
       description="Compare adjacent elements, swap if out of order, repeat"
       tag="Algorithms"
       tagColor="bg-[#ffa657]"
-      steps={steps}
+      steps={defaultSteps}
       codeLines={codeLines}
+      complexity={bubbleSortComplexity}
+      editableInput={bubbleSortInput}
+      editableDefaultValue="64, 34, 25, 12, 22"
       renderVisual={(state: SortState) => (
         <div className="w-full max-w-lg space-y-5">
           {/* Bar chart */}

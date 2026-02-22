@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface MapState {
   entries: { key: string; value: string | number; highlight?: 'add' | 'del' | 'get' }[];
@@ -67,6 +68,17 @@ function hashBucket(key: string): number {
   return h;
 }
 
+/** Map complexity: O(1) average for all operations using hash function */
+const mapComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(1)', // Hash computed in constant time, no collision
+    average: 'O(1)', // Average case with a good hash function
+    worst: 'O(n)', // Extreme hash collisions cause linear probing
+  },
+  space: 'O(n)',    // Proportional to the number of key-value pairs
+  notes: 'Go maps use a hash table internally. Order of iteration is randomized.',
+};
+
 export function Maps() {
   return (
     <VisualizationLayout
@@ -76,6 +88,7 @@ export function Maps() {
       tagColor="bg-[#79c0ff]"
       steps={steps}
       codeLines={codeLines}
+      complexity={mapComplexity}
       renderVisual={(state: MapState) => (
         <div className="w-full max-w-xl space-y-5">
           {/* Hash buckets visualization */}

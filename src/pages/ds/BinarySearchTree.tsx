@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface BSTNode { val: number; left?: BSTNode; right?: BSTNode }
 interface BSTState {
@@ -64,14 +65,25 @@ const steps: Step<BSTState>[] = [
   { description: 'insert(root, 50) — root is nil, create first node. 50 becomes the root.', highlightLines: [34, 12, 13], state: { root: { val: 50 }, highlight: 50, action: 'insert' } },
   { description: 'insert(root, 30) — 30 < 50, go LEFT. Left is nil → insert here.', highlightLines: [35, 15, 16], state: { root: ins({ val: 50 }, 30), highlight: 30, action: 'insert', searchPath: [50, 30] } },
   { description: 'insert(root, 70) — 70 > 50, go RIGHT. Right is nil → insert here.', highlightLines: [36, 17, 18], state: { root: ins(ins({ val: 50 }, 30), 70), highlight: 70, action: 'insert', searchPath: [50, 70] } },
-  { description: 'insert(root, 20) — 20 < 50 → left → 20 < 30 → left of 30. Insert here.', highlightLines: [37, 15, 16], state: { root: [50,30,70,20].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode), highlight: 20, action: 'insert', searchPath: [50, 30, 20] } },
-  { description: 'insert(root, 40) — 40 < 50 → left → 40 > 30 → right of 30. Insert here.', highlightLines: [38, 15, 16, 17, 18], state: { root: [50,30,70,20,40].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode), highlight: 40, action: 'insert', searchPath: [50, 30, 40] } },
-  { description: 'BST built! Property: every left child < parent < every right child.', highlightLines: [38], state: { root: [50,30,70,20,40].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode) } },
-  { description: 'search(root, 40) — Start at root(50). 40 < 50 → go LEFT.', highlightLines: [39, 23, 26], state: { root: [50,30,70,20,40].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode), action: 'search', searchPath: [50] } },
-  { description: 'At 30. 40 > 30 → go RIGHT.', highlightLines: [28, 29], state: { root: [50,30,70,20,40].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode), action: 'search', searchPath: [50, 30] } },
-  { description: 'At 40. 40 == 40 → FOUND! Return true.', highlightLines: [25], state: { root: [50,30,70,20,40].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode), action: 'search', searchPath: [50, 30, 40], found: true, highlight: 40 } },
-  { description: 'search(root, 45) — 45 < 50 → LEFT, 45 > 30 → RIGHT, 45 > 40 → RIGHT. Right of 40 is nil → return false.', highlightLines: [40, 23, 24], state: { root: [50,30,70,20,40].reduce((r,v) => ins(r,v), undefined as unknown as BSTNode), action: 'search', searchPath: [50, 30, 40], found: false } },
+  { description: 'insert(root, 20) — 20 < 50 → left → 20 < 30 → left of 30. Insert here.', highlightLines: [37, 15, 16], state: { root: [50, 30, 70, 20].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode), highlight: 20, action: 'insert', searchPath: [50, 30, 20] } },
+  { description: 'insert(root, 40) — 40 < 50 → left → 40 > 30 → right of 30. Insert here.', highlightLines: [38, 15, 16, 17, 18], state: { root: [50, 30, 70, 20, 40].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode), highlight: 40, action: 'insert', searchPath: [50, 30, 40] } },
+  { description: 'BST built! Property: every left child < parent < every right child.', highlightLines: [38], state: { root: [50, 30, 70, 20, 40].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode) } },
+  { description: 'search(root, 40) — Start at root(50). 40 < 50 → go LEFT.', highlightLines: [39, 23, 26], state: { root: [50, 30, 70, 20, 40].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode), action: 'search', searchPath: [50] } },
+  { description: 'At 30. 40 > 30 → go RIGHT.', highlightLines: [28, 29], state: { root: [50, 30, 70, 20, 40].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode), action: 'search', searchPath: [50, 30] } },
+  { description: 'At 40. 40 == 40 → FOUND! Return true.', highlightLines: [25], state: { root: [50, 30, 70, 20, 40].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode), action: 'search', searchPath: [50, 30, 40], found: true, highlight: 40 } },
+  { description: 'search(root, 45) — 45 < 50 → LEFT, 45 > 30 → RIGHT, 45 > 40 → RIGHT. Right of 40 is nil → return false.', highlightLines: [40, 23, 24], state: { root: [50, 30, 70, 20, 40].reduce((r, v) => ins(r, v), undefined as unknown as BSTNode), action: 'search', searchPath: [50, 30, 40], found: false } },
 ];
+
+/** BST complexity: O(log n) average, O(n) worst (degenerate/unbalanced tree) */
+const bstComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(log n)', // Balanced tree — half the nodes eliminated per step
+    average: 'O(log n)', // Random insertions produce a reasonably balanced tree
+    worst: 'O(n)',     // Sorted insertions create a degenerate linked-list tree
+  },
+  space: 'O(n)',         // One node per inserted value
+  notes: 'Worst case O(n) when elements are inserted in sorted order (use AVL/Red-Black for O(log n) guaranteed).',
+};
 
 function TreeViz({ node, highlight, searchPath, found }: { node?: BSTNode; highlight?: number; searchPath?: number[]; found?: boolean }) {
   if (!node) return null;
@@ -127,6 +139,7 @@ export function BinarySearchTree() {
       tagColor="bg-[#79c0ff]"
       steps={steps}
       codeLines={codeLines}
+      complexity={bstComplexity}
       renderVisual={(state: BSTState) => (
         <div className="w-full space-y-4">
           {/* Tree */}

@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface MergeBar {
   value: number;
@@ -71,6 +72,17 @@ const codeLines = [
 
 const INIT = [38, 27, 43, 3, 9, 82, 10];
 const MAX_VAL = 90;
+
+/** Complexity data for Merge Sort — O(n log n) in all cases */
+const mergeSortComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(n log n)', // Cannot be improved even if already sorted
+    average: 'O(n log n)', // Always divides log n times, merges n per level
+    worst: 'O(n log n)', // Consistent regardless of input order
+  },
+  space: 'O(n)',          // Requires extra array for merging at each level
+  notes: 'Stable sort: equal elements maintain their relative order.',
+};
 
 function makeBar(value: number, state: MergeBar['state'] = 'idle', depth = 0): MergeBar {
   return { value, state, depth };
@@ -262,10 +274,10 @@ const barStateColor: Record<string, string> = {
 };
 
 const blockStateStyle: Record<MergeBlock['state'], { border: string; bg: string; text: string }> = {
-  active:  { border: '#ffa657', bg: 'rgba(255,166,87,0.1)',  text: '#ffa657' },
+  active: { border: '#ffa657', bg: 'rgba(255,166,87,0.1)', text: '#ffa657' },
   merging: { border: '#d2a8ff', bg: 'rgba(210,168,255,0.1)', text: '#d2a8ff' },
-  sorted:  { border: '#3fb950', bg: 'rgba(63,185,80,0.08)',  text: '#3fb950' },
-  idle:    { border: '#30363d', bg: 'transparent',           text: '#8b949e' },
+  sorted: { border: '#3fb950', bg: 'rgba(63,185,80,0.08)', text: '#3fb950' },
+  idle: { border: '#30363d', bg: 'transparent', text: '#8b949e' },
 };
 
 export function MergeSort() {
@@ -277,6 +289,7 @@ export function MergeSort() {
       tagColor="bg-[#ffa657]"
       steps={steps}
       codeLines={codeLines}
+      complexity={mergeSortComplexity}
       renderVisual={(state: MergeSortState) => (
         <div className="w-full max-w-xl space-y-4">
 

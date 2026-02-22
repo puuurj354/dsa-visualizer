@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface SliceState {
   items: number[];
@@ -41,17 +42,28 @@ const codeLines = [
 ];
 
 const steps: Step<SliceState>[] = [
-  { description: 'Arrays in Go have a fixed size declared at compile time.', highlightLines: [7], state: { items: [1,2,3,4,5], len: 5, cap: 5, highlightIdx: -1, label: 'arr [5]int' } },
-  { description: 'Create a slice s with 3 elements. len=3, cap=3. Slices are backed by an underlying array.', highlightLines: [10], state: { items: [10,20,30], len: 3, cap: 3, highlightIdx: -1, label: 's []int' } },
-  { description: 'len(s)=3, cap(s)=3. len is the number of elements, cap is the allocated capacity.', highlightLines: [11], state: { items: [10,20,30], len: 3, cap: 3, highlightIdx: -1, label: 's []int' } },
-  { description: 'append(s, 40) — capacity is exceeded! Go allocates a new larger backing array (doubles cap to 6) and copies data.', highlightLines: [14], state: { items: [10,20,30,40], len: 4, cap: 6, highlightIdx: 3, label: 's after append 40' } },
-  { description: 'Now len=4, cap=6. There are 2 extra slots pre-allocated to avoid frequent reallocations.', highlightLines: [15], state: { items: [10,20,30,40,0,0], len: 4, cap: 6, highlightIdx: 3, label: 's (cap=6, extra slots)' } },
-  { description: 'append(s, 50, 60) — append multiple values. Fits within existing cap (4+2=6).', highlightLines: [17], state: { items: [10,20,30,40,50,60], len: 6, cap: 6, highlightIdx: 4, label: 's after append 50,60' } },
-  { description: 'len=6, cap=6. Slice is now full. Next append would trigger reallocation.', highlightLines: [18], state: { items: [10,20,30,40,50,60], len: 6, cap: 6, highlightIdx: 5, label: 's fully used' } },
-  { description: 'Slicing: s[1:4] creates a new slice header pointing to the SAME underlying array. Indices 1,2,3 (inclusive:exclusive).', highlightLines: [21], state: { items: [10,20,30,40,50,60], len: 6, cap: 6, highlightIdx: -1, sliceStart: 1, sliceEnd: 4, subSlice: [20,30,40], label: 's[1:4]' } },
-  { description: 'sub = [20, 30, 40]. Modifying sub would also modify s since they share the same array!', highlightLines: [22], state: { items: [10,20,30,40,50,60], len: 6, cap: 6, highlightIdx: -1, sliceStart: 1, sliceEnd: 4, subSlice: [20,30,40], label: 'sub = s[1:4]' } },
-  { description: 's[0] accesses the element at index 0 → 10.', highlightLines: [25], state: { items: [10,20,30,40,50,60], len: 6, cap: 6, highlightIdx: 0, label: 's[0] = 10' } },
+  { description: 'Arrays in Go have a fixed size declared at compile time.', highlightLines: [7], state: { items: [1, 2, 3, 4, 5], len: 5, cap: 5, highlightIdx: -1, label: 'arr [5]int' } },
+  { description: 'Create a slice s with 3 elements. len=3, cap=3. Slices are backed by an underlying array.', highlightLines: [10], state: { items: [10, 20, 30], len: 3, cap: 3, highlightIdx: -1, label: 's []int' } },
+  { description: 'len(s)=3, cap(s)=3. len is the number of elements, cap is the allocated capacity.', highlightLines: [11], state: { items: [10, 20, 30], len: 3, cap: 3, highlightIdx: -1, label: 's []int' } },
+  { description: 'append(s, 40) — capacity is exceeded! Go allocates a new larger backing array (doubles cap to 6) and copies data.', highlightLines: [14], state: { items: [10, 20, 30, 40], len: 4, cap: 6, highlightIdx: 3, label: 's after append 40' } },
+  { description: 'Now len=4, cap=6. There are 2 extra slots pre-allocated to avoid frequent reallocations.', highlightLines: [15], state: { items: [10, 20, 30, 40, 0, 0], len: 4, cap: 6, highlightIdx: 3, label: 's (cap=6, extra slots)' } },
+  { description: 'append(s, 50, 60) — append multiple values. Fits within existing cap (4+2=6).', highlightLines: [17], state: { items: [10, 20, 30, 40, 50, 60], len: 6, cap: 6, highlightIdx: 4, label: 's after append 50,60' } },
+  { description: 'len=6, cap=6. Slice is now full. Next append would trigger reallocation.', highlightLines: [18], state: { items: [10, 20, 30, 40, 50, 60], len: 6, cap: 6, highlightIdx: 5, label: 's fully used' } },
+  { description: 'Slicing: s[1:4] creates a new slice header pointing to the SAME underlying array. Indices 1,2,3 (inclusive:exclusive).', highlightLines: [21], state: { items: [10, 20, 30, 40, 50, 60], len: 6, cap: 6, highlightIdx: -1, sliceStart: 1, sliceEnd: 4, subSlice: [20, 30, 40], label: 's[1:4]' } },
+  { description: 'sub = [20, 30, 40]. Modifying sub would also modify s since they share the same array!', highlightLines: [22], state: { items: [10, 20, 30, 40, 50, 60], len: 6, cap: 6, highlightIdx: -1, sliceStart: 1, sliceEnd: 4, subSlice: [20, 30, 40], label: 'sub = s[1:4]' } },
+  { description: 's[0] accesses the element at index 0 → 10.', highlightLines: [25], state: { items: [10, 20, 30, 40, 50, 60], len: 6, cap: 6, highlightIdx: 0, label: 's[0] = 10' } },
 ];
+
+/** Arrays & Slices complexity */
+const sliceComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(1)', // Index access, append within capacity — constant time
+    average: 'O(1)', // Amortized O(1) for append with doubling strategy
+    worst: 'O(n)', // Append that triggers reallocation + full copy
+  },
+  space: 'O(n)',    // Underlying array proportional to capacity
+  notes: 'Index access is O(1). Append is amortized O(1) with occasional O(n) copies.',
+};
 
 export function ArraysSlices() {
   return (
@@ -62,6 +74,7 @@ export function ArraysSlices() {
       tagColor="bg-[#79c0ff]"
       steps={steps}
       codeLines={codeLines}
+      complexity={sliceComplexity}
       renderVisual={(state: SliceState) => (
         <div className="w-full max-w-2xl space-y-5">
           {/* Label */}

@@ -1,4 +1,6 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
+import type { EditableInputConfig } from '../../components/EditableInputPanel';
 
 interface BSState {
   arr: number[];
@@ -39,10 +41,21 @@ const codeLines = [
   '}',
 ];
 
-const arr = [2, 5, 8, 12, 16, 23, 38, 42, 57, 72];
-const target = 23;
+// ─── Default dataset ──────────────────────────────────────────
+const DEFAULT_ARR = [2, 5, 8, 12, 16, 23, 38, 42, 57, 72]; // Sorted array for default demo
+const DEFAULT_TARGET = 23;                                    // Default search target
 
-function buildSteps(): Step<BSState>[] {
+/**
+ * buildSteps
+ * Generates visualization steps for Binary Search given a sorted array and target.
+ * Extracted into a standalone function so `editableInput.generateSteps` can call
+ * it with custom data without duplicating algorithm logic.
+ *
+ * @param arr    - Pre-sorted integer array to search in
+ * @param target - The integer value to search for
+ * @returns      - Array of Step<BSState>
+ */
+function buildSteps(arr: number[], target: number): Step<BSState>[] {
   const steps: Step<BSState>[] = [];
   const eliminated: number[] = [];
   let left = 0;
@@ -91,7 +104,61 @@ function buildSteps(): Step<BSState>[] {
   return steps;
 }
 
-const steps = buildSteps();
+// ─── Default steps ────────────────────────────────────────────
+const defaultSteps = buildSteps(DEFAULT_ARR, DEFAULT_TARGET);
+
+// ─── Complexity info for the Complexity Card ──────────────────
+const binarySearchComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(1)',      // Target is the very first mid element checked
+    average: 'O(log n)', // Halves the search space each iteration
+    worst: 'O(log n)', // Target not found — log₂(n) iterations max
+  },
+  space: 'O(1)',         // Iterative approach uses only pointer variables
+  notes: 'Requires a pre-sorted array. Beats linear search after ~20 elements.',
+};
+
+// ─── Editable Input Configuration ─────────────────────────────
+const binarySearchInput: EditableInputConfig<BSState> = {
+  label: 'Sorted array, target:',
+  placeholder: 'e.g. 2, 5, 8, 12, 16, 23 | 23',
+
+  /**
+   * validate — expects two parts separated by "|": the sorted array and the target.
+   * Format: "1, 2, 3, 4 | 3"
+   *
+   * @param raw - Raw input string
+   * @returns   - Error string | null
+   */
+  validate(raw: string): string | null {
+    const [arrPart, targetPart] = raw.split('|').map(s => s.trim()); // Split by pipe
+    if (!arrPart || !targetPart) return 'Format: sorted numbers | target  e.g. 2,5,8 | 5';
+    const nums = arrPart.split(',').map(s => parseInt(s.trim(), 10));  // Parse array
+    if (nums.some(isNaN)) return 'Array must contain only integers.';
+    if (nums.length < 2) return 'Array must have at least 2 elements.';
+    if (nums.length > 12) return 'Maximum 12 elements allowed.';
+    // Verify the array is sorted
+    for (let i = 1; i < nums.length; i++) {
+      if (nums[i] < nums[i - 1]) return 'Array must be sorted in ascending order.';
+    }
+    const target = parseInt(targetPart, 10);
+    if (isNaN(target)) return 'Target must be an integer.';
+    return null; // Valid
+  },
+
+  /**
+   * generateSteps — parses array and target from the validated pipe-separated input.
+   *
+   * @param raw - Valid pipe-separated input string
+   * @returns   - Step<BSState>[]
+   */
+  generateSteps(raw: string): Step<BSState>[] {
+    const [arrPart, targetPart] = raw.split('|').map(s => s.trim());
+    const arr = arrPart.split(',').map(s => parseInt(s.trim(), 10)); // Parse array
+    const target = parseInt(targetPart.trim(), 10);                   // Parse target
+    return buildSteps(arr, target);
+  },
+};
 
 export function BinarySearch() {
   return (
@@ -100,8 +167,11 @@ export function BinarySearch() {
       description="O(log n) search on a sorted array by halving the search space"
       tag="Algorithms"
       tagColor="bg-[#ffa657]"
-      steps={steps}
+      steps={defaultSteps}
       codeLines={codeLines}
+      complexity={binarySearchComplexity}
+      editableInput={binarySearchInput}
+      editableDefaultValue="2, 5, 8, 12, 16, 23, 38, 42, 57, 72 | 23"
       renderVisual={(state: BSState) => (
         <div className="w-full max-w-2xl space-y-5">
           {/* Target */}
@@ -181,7 +251,7 @@ export function BinarySearch() {
             </div>
             <div className="flex-1 text-[#8b949e] text-xs">
               Each step eliminates <span className="text-[#ffa657]">half</span> the remaining elements.
-              For n=10, max {Math.ceil(Math.log2(arr.length))} comparisons.
+              For n={state.arr.length}, max {Math.ceil(Math.log2(state.arr.length))} comparisons.
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import type { ComplexityInfo } from '../../components/ComplexityCard';
 
 interface StackState {
   items: number[];
@@ -58,6 +59,17 @@ const steps: Step<StackState>[] = [
 
 const itemColors = ['#3fb950', '#ffa657', '#79c0ff', '#d2a8ff', '#00ACD7', '#f85149'];
 
+/** Stack complexity: Push/Pop/Peek are all O(1) */
+const stackComplexity: ComplexityInfo = {
+  time: {
+    best: 'O(1)', // Push, Pop, Peek — constant time operations
+    average: 'O(1)',
+    worst: 'O(1)',
+  },
+  space: 'O(n)',    // Stack grows linearly with the number of elements
+  notes: 'All core operations are O(1). Go slices handle growth amortized.',
+};
+
 export function Stack() {
   return (
     <VisualizationLayout
@@ -67,6 +79,7 @@ export function Stack() {
       tagColor="bg-[#79c0ff]"
       steps={steps}
       codeLines={codeLines}
+      complexity={stackComplexity}
       renderVisual={(state: StackState) => (
         <div className="w-full max-w-sm">
           {/* Stack visualization */}
