@@ -1,7 +1,5 @@
-import {
-  VisualizationLayout,
-  Step,
-} from "../../components/VisualizationLayout";
+import { VisualizationLayout } from "../../components/VisualizationLayout";
+import type { Step } from "../../components/VisualizationLayout";
 
 interface GRoutine {
   id: number;
@@ -459,7 +457,7 @@ export function Goroutines() {
                     start: (i + 1) * 8,
                     width: g.progress,
                   })),
-                ].map((row, i) => (
+                ].map((row) => (
                   <div key={row.label} className="flex items-center gap-2 mb-1">
                     <span
                       className="text-[10px] w-8 text-right flex-shrink-0"
