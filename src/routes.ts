@@ -95,6 +95,21 @@ const ContextCancel = lazy(() =>
 const RWMutex = lazy(() =>
   import('./pages/concurrency/RWMutex').then(m => ({ default: m.RWMutex }))
 );
+const WorkerPool = lazy(() =>
+  import('./pages/concurrency/WorkerPool').then(m => ({ default: m.WorkerPool }))
+);
+const Pipeline = lazy(() =>
+  import('./pages/concurrency/Pipeline').then(m => ({ default: m.Pipeline }))
+);
+const ErrGroup = lazy(() =>
+  import('./pages/concurrency/ErrGroup').then(m => ({ default: m.ErrGroup }))
+);
+const Generics = lazy(() =>
+  import('./pages/basics/Generics').then(m => ({ default: m.Generics }))
+);
+const Closures = lazy(() =>
+  import('./pages/basics/Closures').then(m => ({ default: m.Closures }))
+);
 
 export const router = createBrowserRouter([
   {
@@ -128,6 +143,11 @@ export const router = createBrowserRouter([
       { path: 'concurrency/goroutine-scheduler', Component: GoroutineScheduler },
       { path: 'concurrency/sync-once', Component: SyncOnce },
       { path: 'concurrency/context', Component: ContextCancel },
+      { path: 'concurrency/worker-pool', Component: WorkerPool },
+      { path: 'concurrency/pipeline', Component: Pipeline },
+      { path: 'concurrency/errgroup', Component: ErrGroup },
+      { path: 'basics/generics', Component: Generics },
+      { path: 'basics/closures', Component: Closures },
       { path: 'concurrency/rwmutex', Component: RWMutex },
     ],
   },

@@ -34,6 +34,8 @@ const navCategories: NavCategory[] = [
       { label: "Defer / Panic / Recover", path: "/basics/defer-panic-recover" },
       { label: "Interfaces & Type Assert", path: "/basics/interfaces" },
       { label: "Error Wrapping", path: "/basics/error-wrapping" },
+      { label: "Closures", path: "/basics/closures" },
+      { label: "Generics", path: "/basics/generics" },
     ],
   },
   {
@@ -74,6 +76,9 @@ const navCategories: NavCategory[] = [
       { label: "Goroutine Scheduler", path: "/concurrency/goroutine-scheduler" },
       { label: "sync.Once", path: "/concurrency/sync-once" },
       { label: "Context Cancellation", path: "/concurrency/context" },
+      { label: "Worker Pool", path: "/concurrency/worker-pool" },
+      { label: "Pipeline Pattern", path: "/concurrency/pipeline" },
+      { label: "errgroup", path: "/concurrency/errgroup" },
     ],
   },
 ];
@@ -90,14 +95,14 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   };
   const isExpanded = (label: string) => expanded.includes(label);
 
-  
+
   const sectionId = (label: string) =>
     `nav-section-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
     <div className="flex flex-col h-full bg-[#0d1117]">
 
-     
+
       <div className="px-4 py-4 border-b border-[#30363d] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-[#00ACD7] flex items-center justify-center">
@@ -108,7 +113,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             <p className="text-[#8b949e] text-xs">Visualizer</p>
           </div>
         </div>
- 
+
         {onClose && (
           <button
             onClick={onClose}
@@ -120,10 +125,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         )}
       </div>
 
-      
+
       <nav className="flex-1 overflow-y-auto py-3 px-2" aria-label="Main navigation">
 
-        
+
         <NavLink
           to="/"
           end
@@ -142,7 +147,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
         {navCategories.map(cat => (
           <div key={cat.label} className="mb-1">
-          
+
             <button
               onClick={() => toggle(cat.label)}
               aria-expanded={isExpanded(cat.label)}
@@ -159,7 +164,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
               }
             </button>
 
-           
+
             {isExpanded(cat.label) && (
               <div
                 id={sectionId(cat.label)}
@@ -187,7 +192,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         ))}
       </nav>
 
-    
+
       <div className="px-4 py-3 border-t border-[#30363d]">
         <p className="text-[#8b949e] text-xs">Built with Go concepts</p>
       </div>
@@ -208,7 +213,7 @@ export function Layout() {
         <SidebarContent />
       </div>
 
-     
+
       {sidebarOpen && (
         <div
           className="md:hidden fixed inset-0 z-50 flex"
@@ -219,21 +224,21 @@ export function Layout() {
           <div className="w-64 flex-shrink-0 border-r border-[#30363d]">
             <SidebarContent onClose={() => setSidebarOpen(false)} />
           </div>
-         
+
           <div
             className="flex-1 bg-black/50"
-            aria-hidden="true"             
+            aria-hidden="true"
             onClick={() => setSidebarOpen(false)}
           />
         </div>
       )}
 
-  
+
       <div className="flex-1 flex flex-col overflow-hidden">
 
-       
+
         <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#30363d] bg-[#161b22]">
-         
+
           <button
             onClick={() => setSidebarOpen(true)}
             aria-label="Open navigation menu"
@@ -251,7 +256,7 @@ export function Layout() {
           </div>
         </div>
 
-      
+
         <div className="flex-1 overflow-hidden">
           <Outlet />
         </div>
