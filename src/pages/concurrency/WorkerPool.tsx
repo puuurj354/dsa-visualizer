@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import { type ComplexityInfo } from '../../components/ComplexityCard';
 
 // ─── State types ───────────────────────────────────────────────
 
@@ -26,6 +27,16 @@ interface WorkerPoolState {
 }
 
 // ─── Code ─────────────────────────────────────────────────────
+
+const workerPoolComplexity: ComplexityInfo = {
+    time: {
+        best: 'O(n/k)', // n jobs, k workers — fully parallel execution
+        average: 'O(n/k)', // assumes uniform job duration
+        worst: 'O(n)',   // k=1 or all jobs pile onto one worker
+    },
+    space: 'O(k + n)', // k goroutines on stack + n buffered channel slots
+    notes: 'Worker Pool bounds concurrency to k goroutines, preventing resource exhaustion. Ideal k ≈ number of CPU cores for CPU-bound work; higher for I/O-bound.',
+};
 
 const codeLines = [
     'package main',
@@ -247,6 +258,7 @@ export function WorkerPool() {
             tag="Concurrency"
             tagColor="bg-[#00ACD7]"
             steps={steps}
+            complexity={workerPoolComplexity}
             codeLines={codeLines}
             renderVisual={(state: WorkerPoolState) => (
                 <div className="w-full max-w-xl space-y-4">

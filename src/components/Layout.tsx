@@ -49,6 +49,10 @@ const navCategories: NavCategory[] = [
       { label: "Queue", path: "/ds/queue" },
       { label: "Linked List", path: "/ds/linked-list" },
       { label: "Binary Search Tree", path: "/ds/binary-search-tree" },
+      { label: "Heap / Priority Queue", path: "/ds/heap" },
+      { label: "Hash Table", path: "/ds/hash-table" },
+      { label: "Trie", path: "/ds/trie" },
+      { label: "Graph (BFS)", path: "/ds/graph" },
     ],
   },
   {

@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import { type ComplexityInfo } from '../../components/ComplexityCard';
 
 interface TypeInstantiation {
     typeParam: string;
@@ -21,6 +22,16 @@ interface GenericsState {
     output: string[];
     note?: string;
 }
+
+const genericsComplexity: ComplexityInfo = {
+    time: {
+        best: 'O(same as T)', // identical to the concrete type version
+        average: 'O(same as T)',
+        worst: 'O(same as T)', // zero overhead — specialization at compile time
+    },
+    space: 'O(same as T)', // no boxing — values stored directly, not as interface{}
+    notes: 'Go generics use compile-time monomorphization: one source, multiple compiled versions. Unlike Java generics (type erasure), no runtime overhead or boxing costs.',
+};
 
 const codeLines = [
     'package main',
@@ -136,6 +147,7 @@ export function Generics() {
             tag="Basics"
             tagColor="bg-[#3fb950]"
             steps={steps}
+            complexity={genericsComplexity}
             codeLines={codeLines}
             renderVisual={(state: GenericsState) => (
                 <div className="w-full max-w-xl space-y-4">

@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import { type ComplexityInfo } from '../../components/ComplexityCard';
 
 // ─── State types ───────────────────────────────────────────────
 
@@ -19,6 +20,16 @@ interface ErrGroupState {
 }
 
 // ─── Code ─────────────────────────────────────────────────────
+
+const errGroupComplexity: ComplexityInfo = {
+    time: {
+        best: 'O(max(t₁…tₙ))', // all goroutines run concurrently, wait for slowest
+        average: 'O(max(t₁…tₙ))',
+        worst: 'O(Σ tᵢ)',        // if goroutines are forced to serialize
+    },
+    space: 'O(n)', // n goroutine stacks + 1 error slot
+    notes: 'g.Wait() blocks until ALL goroutines finish, even after the first error. Context cancellation signals remaining goroutines to exit early. O(1) error storage — only first error is kept.',
+};
 
 const codeLines = [
     'package main',
@@ -69,7 +80,7 @@ const steps: Step<ErrGroupState>[] = [
     },
     {
         description: '`errgroup.WithContext()` creates an errgroup `g` and a derived context `ctx`. If any goroutine returns an error, `ctx` is cancelled automatically.',
-        highlightLines: [25],
+        highlightLines: [25, 26],
         state: {
             tasks: [],
             groupDone: false,
@@ -79,7 +90,7 @@ const steps: Step<ErrGroupState>[] = [
     },
     {
         description: '`g.Go(...)` launches 3 goroutines concurrently. Unlike `go func()`, errgroup tracks each goroutine\'s return value — no manual WaitGroup or error channel needed.',
-        highlightLines: [27, 28, 29],
+        highlightLines: [27, 28, 29, 30],
         state: {
             tasks: [
                 { id: 1, name: 'fetchUser()', status: 'running' },
@@ -92,7 +103,7 @@ const steps: Step<ErrGroupState>[] = [
     },
     {
         description: '`fetchUser()` and `fetchComments()` succeed (return nil). `fetchPosts()` is still running — it will return an error.',
-        highlightLines: [10, 11, 20, 21],
+        highlightLines: [10, 11, 20, 21, 28, 30],
         state: {
             tasks: [
                 { id: 1, name: 'fetchUser()', status: 'success' },
@@ -105,7 +116,7 @@ const steps: Step<ErrGroupState>[] = [
     },
     {
         description: '`fetchPosts()` returns an error. errgroup records it and immediately cancels `ctx`. Any goroutine checking `ctx.Err()` would detect cancellation.',
-        highlightLines: [15, 16],
+        highlightLines: [15, 16, 29],
         state: {
             tasks: [
                 { id: 1, name: 'fetchUser()', status: 'success' },
@@ -119,7 +130,7 @@ const steps: Step<ErrGroupState>[] = [
     },
     {
         description: '`g.Wait()` blocks until ALL goroutines finish, then returns the FIRST non-nil error (or nil if all succeeded). Order of errors doesn\'t matter.',
-        highlightLines: [31],
+        highlightLines: [32],
         state: {
             tasks: [
                 { id: 1, name: 'fetchUser()', status: 'success' },
@@ -132,7 +143,7 @@ const steps: Step<ErrGroupState>[] = [
     },
     {
         description: '`err != nil`, so we print the error and return. errgroup makes this pattern clean: launch N goroutines, wait for all, handle first error — 3 lines.',
-        highlightLines: [32, 33],
+        highlightLines: [32, 33, 34],
         state: {
             tasks: [
                 { id: 1, name: 'fetchUser()', status: 'success' },
@@ -165,6 +176,7 @@ export function ErrGroup() {
             tag="Concurrency"
             tagColor="bg-[#00ACD7]"
             steps={steps}
+            complexity={errGroupComplexity}
             codeLines={codeLines}
             renderVisual={(state: ErrGroupState) => (
                 <div className="w-full max-w-xl space-y-4">

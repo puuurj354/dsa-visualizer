@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import { type ComplexityInfo } from '../../components/ComplexityCard';
 
 // ─── State types ───────────────────────────────────────────────
 
@@ -21,6 +22,18 @@ interface ClosureState {
     output: string[];
     note?: string;
 }
+
+// ─── Complexity ────────────────────────────────────────────────
+
+const closuresComplexity: ComplexityInfo = {
+    time: {
+        best: 'O(1)', // closure call itself is O(1); body complexity depends on logic
+        average: 'O(1)',
+        worst: 'O(1)', // captured variable access is a single pointer dereference
+    },
+    space: 'O(c)', // c = number of captured variables (stored on heap by Go's escape analysis)
+    notes: "Each call to the outer function creates a new independent environment (O(c) allocation). Captured vars are heap-allocated by Go automatically — no manual memory management.",
+};
 
 // ─── Code ─────────────────────────────────────────────────────
 
@@ -162,6 +175,7 @@ export function Closures() {
             tag="Basics"
             tagColor="bg-[#3fb950]"
             steps={steps}
+            complexity={closuresComplexity}
             codeLines={codeLines}
             renderVisual={(state: ClosureState) => (
                 <div className="w-full max-w-xl space-y-4">

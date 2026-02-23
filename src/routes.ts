@@ -52,6 +52,18 @@ const LinkedList = lazy(() =>
 const BinarySearchTree = lazy(() =>
   import('./pages/ds/BinarySearchTree').then(m => ({ default: m.BinarySearchTree }))
 );
+const Heap = lazy(() =>
+  import('./pages/ds/Heap').then(m => ({ default: m.Heap }))
+);
+const HashTable = lazy(() =>
+  import('./pages/ds/HashTable').then(m => ({ default: m.HashTable }))
+);
+const Trie = lazy(() =>
+  import('./pages/ds/Trie').then(m => ({ default: m.Trie }))
+);
+const Graph = lazy(() =>
+  import('./pages/ds/Graph').then(m => ({ default: m.Graph }))
+);
 
 
 const BubbleSort = lazy(() =>
@@ -131,6 +143,10 @@ export const router = createBrowserRouter([
       { path: 'ds/queue', Component: Queue },
       { path: 'ds/linked-list', Component: LinkedList },
       { path: 'ds/binary-search-tree', Component: BinarySearchTree },
+      { path: 'ds/heap', Component: Heap },
+      { path: 'ds/hash-table', Component: HashTable },
+      { path: 'ds/trie', Component: Trie },
+      { path: 'ds/graph', Component: Graph },
       { path: 'algorithms/bubble-sort', Component: BubbleSort },
       { path: 'algorithms/binary-search', Component: BinarySearch },
       { path: 'algorithms/merge-sort', Component: MergeSort },

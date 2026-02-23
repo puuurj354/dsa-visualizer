@@ -1,4 +1,5 @@
 import { VisualizationLayout, type Step } from '../../components/VisualizationLayout';
+import { type ComplexityInfo } from '../../components/ComplexityCard';
 
 // ─── State types ───────────────────────────────────────────────
 
@@ -19,6 +20,16 @@ interface PipelineState {
 }
 
 // ─── Code ─────────────────────────────────────────────────────
+
+const pipelineComplexity: ComplexityInfo = {
+    time: {
+        best: 'O(n+s)', // n items, s stages — pipelined concurrency
+        average: 'O(n+s)', // stages run in parallel; throughput ≈ 1 item per slowest stage
+        worst: 'O(n·s)', // if stages are serialized (unbuffered + blocking)
+    },
+    space: 'O(s)', // s goroutines + s channel buffers
+    notes: 'Pipeline latency = s × stage_time for first item. Throughput improves with buffered channels. Bottleneck is the slowest stage; tune with fan-out there.',
+};
 
 const codeLines = [
     'package main',
@@ -96,40 +107,40 @@ const makeStages = (
 const steps: Step<PipelineState>[] = [
     {
         description: 'The Pipeline pattern chains goroutines via channels. Each stage reads from an inbound channel, transforms data, and writes to an outbound channel.',
-        highlightLines: [41, 42, 43],
+        highlightLines: [41, 42, 43, 44, 45],
         state: makeStages([], [], [], [], [], [], [false, false, false], []),
     },
     {
         description: '`generate(1,2,3,4,5)` — Stage 1 goroutine starts. It will emit ints 1–5 into channel `c1` and then `close(c1)`, signalling completion.',
-        highlightLines: [6, 7, 8],
+        highlightLines: [6, 7, 8, 43],
         state: makeStages([1, 2, 3, 4, 5], [], [], [], [], [], [true, false, false], [],
             'generate() sends values into channel c1'),
     },
     {
         description: '`square(c1)` — Stage 2 goroutine reads from `c1`. Each value is squared: 1→1, 2→4, 3→9, 4→16, 5→25. Results flow into channel `c2`.',
-        highlightLines: [18, 21, 22],
+        highlightLines: [18, 21, 22, 44],
         state: makeStages([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [], [], [], [true, true, false], []),
     },
     {
         description: '`filterEven(c2)` — Stage 3 goroutine reads from `c2`. Only even squares pass through: 4 (2²) and 16 (4²). 1, 9, 25 are discarded.',
-        highlightLines: [30, 33],
+        highlightLines: [30, 33, 45],
         state: makeStages([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 4, 9, 16, 25], [1, 4, 9, 16, 25], [1, 4, 9, 16, 25], [], [true, true, true], []),
     },
     {
         description: 'Values flow through all 3 stages simultaneously! generate emits 1, square makes it 1, filterEven discards it (odd). The pipeline is live.',
-        highlightLines: [9, 10, 21, 22, 33],
+        highlightLines: [9, 10, 21, 22, 33, 43, 44, 45],
         state: makeStages([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 4, 9, 16, 25], [1, 4, 9, 16, 25], [4, 16], [4], [true, true, true], [4],
             '1² = 1 (odd, filtered) | 2² = 4 (even, passes!)'),
     },
     {
         description: '4 arrives at the consumer via `c3`. 16 is next in the pipeline. Stages run concurrently — generate is producing while square and filter are processing.',
-        highlightLines: [45, 46],
+        highlightLines: [47, 48],
         state: makeStages([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 4, 9, 16, 25], [1, 4, 9, 16, 25], [4, 16], [4, 16], [true, true, true], [4, 16],
             '3²=9 (odd), 4²=16 (even!) → passes filter'),
     },
     {
         description: 'All values processed. `close()` propagates: generate closes c1 → square\'s `range` exits, closes c2 → filterEven closes c3 → main\'s `range` exits.',
-        highlightLines: [12, 24, 36, 45],
+        highlightLines: [12, 24, 36, 47],
         state: makeStages([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 4, 9, 16, 25], [1, 4, 9, 16, 25], [4, 16], [4, 16], [false, false, false], [4, 16],
             'close() cascades: c1 → c2 → c3 → main exits'),
     },
@@ -147,6 +158,7 @@ export function Pipeline() {
             tag="Concurrency"
             tagColor="bg-[#00ACD7]"
             steps={steps}
+            complexity={pipelineComplexity}
             codeLines={codeLines}
             renderVisual={(state: PipelineState) => (
                 <div className="w-full max-w-xl space-y-4">
