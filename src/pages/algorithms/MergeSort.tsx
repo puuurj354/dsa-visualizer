@@ -91,7 +91,7 @@ function makeBar(value: number, state: MergeBar['state'] = 'idle', depth = 0): M
 const steps: Step<MergeSortState>[] = [
   {
     description: 'Initial array [38, 27, 43, 3, 9, 82, 10]. Merge Sort uses divide-and-conquer: recursively SPLIT in half until single elements, then MERGE back in sorted order. O(n log n) guaranteed.',
-    highlightLines: [36, 37],
+    highlightLines: [5, 6, 35, 36],
     state: {
       bars: INIT.map(v => makeBar(v)),
       phase: 'divide',
@@ -102,7 +102,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'DIVIDE phase: split [38,27,43,3,9,82,10] at mid=3 into [38,27,43] and [3,9,82,10]. mergeSort() is called recursively on each half.',
-    highlightLines: [6, 9, 12, 13],
+    highlightLines: [6, 9, 12, 13, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i < 3 ? 'dividing' : 'idle')),
       phase: 'divide',
@@ -118,7 +118,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'Recursively divide [38,27,43] → [38] and [27,43]. Keep splitting until every subarray has 1 element (base case: len ≤ 1).',
-    highlightLines: [6, 7, 9, 12, 13],
+    highlightLines: [6, 7, 9, 12, 13, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i === 0 ? 'sorted' : i < 3 ? 'dividing' : 'idle')),
       phase: 'divide',
@@ -137,7 +137,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'MERGE phase begins: merge([27],[43]) — compare 27 vs 43. 27 ≤ 43 → take 27 into result. Then take remaining 43.',
-    highlightLines: [19, 20, 21, 22, 23, 24],
+    highlightLines: [19, 20, 21, 22, 23, 24, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i === 1 || i === 2 ? 'comparing' : i === 0 ? 'sorted' : 'idle')),
       phase: 'merge',
@@ -155,7 +155,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'Now merge([38], [27,43]) — compare 38 vs 27. 38 > 27 → take 27. Then compare 38 vs 43: 38 ≤ 43 → take 38. Remaining [43] appended.',
-    highlightLines: [22, 23, 24, 25, 26, 27, 28, 31, 32],
+    highlightLines: [22, 23, 24, 25, 26, 27, 28, 31, 32, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i < 3 ? 'merging' : 'idle')),
       phase: 'merge',
@@ -173,7 +173,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'Left half fully sorted: [27, 38, 43] ✓. Now recursively sort the right half [3,9,82,10] — same process: split into [3,9] and [82,10], then single elements.',
-    highlightLines: [12, 13, 6, 7],
+    highlightLines: [12, 13, 6, 7, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i < 3 ? 'sorted' : i < 7 ? 'dividing' : 'idle')),
       phase: 'divide',
@@ -191,7 +191,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'merge([3],[9]) → [3,9]. merge([82],[10]): 82 > 10 → take 10, then 82. Result: [10,82]. Both right sub-halves sorted.',
-    highlightLines: [22, 23, 24, 25, 26, 27, 28],
+    highlightLines: [22, 23, 24, 25, 26, 27, 28, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i < 3 ? 'sorted' : 'merging')),
       phase: 'merge',
@@ -211,7 +211,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'merge([3,9],[10,82]): compare pairs — 3≤10 take 3, 9≤10 take 9, then append [10,82]. Right half sorted: [3,9,10,82] ✓',
-    highlightLines: [22, 23, 24, 25, 26, 27, 28, 31, 32],
+    highlightLines: [22, 23, 24, 25, 26, 27, 28, 31, 32, 35, 36],
     state: {
       bars: INIT.map((v, i) => makeBar(v, i < 3 ? 'sorted' : 'merging')),
       phase: 'merge',
@@ -230,7 +230,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'FINAL MERGE: merge([27,38,43],[3,9,10,82]). Compare element by element — always take the smaller. This is the last merge call.',
-    highlightLines: [15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    highlightLines: [15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 35, 36],
     state: {
       bars: INIT.map(v => makeBar(v, 'merging')),
       phase: 'merge',
@@ -250,7 +250,7 @@ const steps: Step<MergeSortState>[] = [
   },
   {
     description: 'Sorting COMPLETE! Final sorted array: [3, 9, 10, 27, 38, 43, 82]. Merge Sort is stable, O(n log n) in all cases — best, average, and worst.',
-    highlightLines: [15, 16, 37],
+    highlightLines: [15, 16, 35, 36],
     state: {
       bars: [3, 9, 10, 27, 38, 43, 82].map(v => makeBar(v, 'sorted')),
       phase: 'done',

@@ -47,7 +47,7 @@ const gColors = ['#00ACD7', '#ffa657', '#d2a8ff'];
 const steps: Step<MutexState>[] = [
   {
     description: 'Without Mutex: 3 goroutines all read counter=0, increment, and write back. Result is unpredictable — RACE CONDITION!',
-    highlightLines: [9, 10],
+    highlightLines: [9, 10, 22, 23, 24, 25],
     state: {
       locked: false, counter: 0,
       goroutines: gColors.map((c, i) => ({ id: i + 1, status: 'running', color: c, increments: 0 })),
@@ -57,7 +57,7 @@ const steps: Step<MutexState>[] = [
   },
   {
     description: 'With Mutex: declare sync.Mutex. Only ONE goroutine can hold the lock at a time — protecting the critical section.',
-    highlightLines: [10],
+    highlightLines: [10, 22, 23, 24, 25],
     state: { locked: false, counter: 0, goroutines: gColors.map((c, i) => ({ id: i + 1, status: 'running', color: c, increments: 0 })), output: [] },
   },
   {
@@ -114,7 +114,7 @@ const steps: Step<MutexState>[] = [
   },
   {
     description: 'G2 unlocks. G3 acquires lock, increments counter: 2→3, unlocks. All goroutines done.',
-    highlightLines: [15, 16, 17],
+    highlightLines: [15, 16, 17, 26, 27],
     state: {
       locked: false, owner: undefined, counter: 3,
       goroutines: gColors.map((c, i) => ({ id: i + 1, status: 'done', color: c, increments: 1 })),

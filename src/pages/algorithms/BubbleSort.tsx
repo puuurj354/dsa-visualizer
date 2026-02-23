@@ -58,7 +58,7 @@ function generateSteps(initial: number[]): Step<SortState>[] {
 
   steps.push({
     description: 'Initial array: [64, 34, 25, 12, 22]. Bubble sort compares adjacent elements and swaps if out of order.',
-    highlightLines: [23],
+    highlightLines: [5, 6, 23, 24],
     state: { arr: [...arr], comparing: null, sorted: [], pass: 0, swapCount: 0 },
   });
 
@@ -66,14 +66,14 @@ function generateSteps(initial: number[]): Step<SortState>[] {
   for (let i = 0; i < n - 1; i++) {
     steps.push({
       description: `Pass ${i + 1}: Bubbling the largest unsorted element to position ${n - 1 - i}.`,
-      highlightLines: [7, 8],
+      highlightLines: [7, 8, 23, 24],
       state: { arr: [...arr], comparing: null, sorted: [...sorted], pass: i + 1, swapCount },
     });
     let swapped = false;
     for (let j = 0; j < n - 1 - i; j++) {
       steps.push({
         description: `Compare arr[${j}]=${arr[j]} and arr[${j + 1}]=${arr[j + 1]}: ${arr[j] > arr[j + 1] ? '> swap!' : '≤ no swap'}`,
-        highlightLines: [9, 10],
+        highlightLines: [9, 10, 23, 24],
         state: { arr: [...arr], comparing: [j, j + 1], sorted: [...sorted], pass: i + 1, swapCount, swapped: arr[j] > arr[j + 1] },
       });
       if (arr[j] > arr[j + 1]) {
@@ -82,7 +82,7 @@ function generateSteps(initial: number[]): Step<SortState>[] {
         swapCount++;
         steps.push({
           description: `Swapped! arr[${j}] ↔ arr[${j + 1}]. Array is now: [${arr.join(', ')}]`,
-          highlightLines: [11, 12],
+          highlightLines: [11, 12, 23, 24],
           state: { arr: [...arr], comparing: [j, j + 1], sorted: [...sorted], pass: i + 1, swapCount, swapped: true },
         });
       }
@@ -92,7 +92,7 @@ function generateSteps(initial: number[]): Step<SortState>[] {
       description: swapped
         ? `Pass ${i + 1} complete. Element ${arr[n - 1 - i]} is now in its final sorted position.`
         : `Pass ${i + 1}: No swaps were made — array is already sorted! Early exit.`,
-      highlightLines: [14, 15, 16],
+      highlightLines: [14, 15, 16, 23, 24],
       state: { arr: [...arr], comparing: null, sorted: [...sorted], pass: i + 1, swapCount },
     });
     if (!swapped) break;
@@ -101,7 +101,7 @@ function generateSteps(initial: number[]): Step<SortState>[] {
   if (!sorted.includes(0)) {
     steps.push({
       description: `Sorting complete! All ${n} elements are sorted. Total swaps: ${swapCount}.`,
-      highlightLines: [18, 19],
+      highlightLines: [18, 19, 23, 24, 25],
       state: { arr: [...arr], comparing: null, sorted: Array.from({ length: n }, (_, i) => i), pass: n - 1, swapCount },
     });
   }

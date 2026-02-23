@@ -69,7 +69,7 @@ const WRITER_COLOR = '#f85149';
 const steps: Step<RWMutexState>[] = [
   {
     description: 'sync.RWMutex has two lock modes: RLock() for SHARED reads (multiple readers OK simultaneously), and Lock() for EXCLUSIVE writes (no other reader or writer). Start: unlocked.',
-    highlightLines: [10],
+    highlightLines: [10, 30],
     state: {
       lockState: 'unlocked',
       activeReaders: 0,
@@ -81,7 +81,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'R1, R2, R3 are launched. Each calls mu.RLock(). The lock is free — R1 acquires a read lock. READ locks are SHARED: R2 and R3 can also acquire RLock simultaneously!',
-    highlightLines: [15, 16, 17],
+    highlightLines: [15, 16, 17, 18, 32, 33],
     state: {
       lockState: 'read-locked',
       activeReaders: 1,
@@ -98,7 +98,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'R2 and R3 also acquire RLock immediately! All 3 readers hold the lock concurrently — this is the KEY advantage of RWMutex over plain Mutex. 3 concurrent reads!',
-    highlightLines: [15, 16, 17, 18],
+    highlightLines: [15, 16, 17, 18, 32, 33],
     state: {
       lockState: 'read-locked',
       activeReaders: 3,
@@ -115,7 +115,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'The Writer goroutine calls mu.Lock() for exclusive write access. But 3 readers currently hold RLocks! The writer BLOCKS — it must wait for ALL readers to call RUnlock.',
-    highlightLines: [22, 23],
+    highlightLines: [22, 23, 37],
     state: {
       lockState: 'read-locked',
       activeReaders: 3,
@@ -132,7 +132,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'R1 finishes and calls mu.RUnlock(). Active readers: 3 → 2. Once a writer is waiting, NEW RLock() calls also queue up — preventing writer starvation.',
-    highlightLines: [16, 17, 18],
+    highlightLines: [16, 17, 18, 32, 33],
     state: {
       lockState: 'read-locked',
       activeReaders: 2,
@@ -149,7 +149,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'R2 and R3 finish reading and call RUnlock(). Active readers: 2 → 1 → 0. When activeReaders hits 0, the Writer is UNBLOCKED!',
-    highlightLines: [16, 17, 18],
+    highlightLines: [16, 17, 18, 32, 33],
     state: {
       lockState: 'unlocked',
       activeReaders: 0,
@@ -166,7 +166,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'Writer acquires the exclusive Lock! No readers, no other writers. It modifies data = 42 safely. During this time, any new RLock() or Lock() call BLOCKS.',
-    highlightLines: [22, 23, 24, 25, 26],
+    highlightLines: [22, 23, 24, 25, 26, 37],
     state: {
       lockState: 'write-locked',
       activeReaders: 0,
@@ -183,7 +183,7 @@ const steps: Step<RWMutexState>[] = [
   },
   {
     description: 'Writer calls Unlock(). The RWMutex returns to unlocked state. If new readers were queued, they can all acquire RLock simultaneously again.',
-    highlightLines: [23, 24],
+    highlightLines: [23, 24, 37, 38],
     state: {
       lockState: 'unlocked',
       activeReaders: 0,

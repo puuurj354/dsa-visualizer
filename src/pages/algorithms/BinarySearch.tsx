@@ -63,7 +63,7 @@ function buildSteps(arr: number[], target: number): Step<BSState>[] {
 
   steps.push({
     description: `Search for target=${target} in sorted array. Initialize left=0, right=${arr.length - 1}.`,
-    highlightLines: [5, 6],
+    highlightLines: [5, 6, 23, 24],
     state: { arr, left, right, mid: -1, target, found: null, eliminated: [] },
   });
 
@@ -71,21 +71,21 @@ function buildSteps(arr: number[], target: number): Step<BSState>[] {
     const mid = left + Math.floor((right - left) / 2);
     steps.push({
       description: `mid = left + (right-left)/2 = ${left} + (${right}-${left})/2 = ${mid}. arr[${mid}] = ${arr[mid]}.`,
-      highlightLines: [8, 9],
+      highlightLines: [8, 9, 23, 24],
       state: { arr, left, right, mid, target, found: null, eliminated: [...eliminated] },
     });
 
     if (arr[mid] === target) {
       steps.push({
         description: `arr[${mid}] = ${arr[mid]} == target(${target})! Found at index ${mid}. Return ${mid}.`,
-        highlightLines: [11, 12],
+        highlightLines: [11, 12, 23, 24],
         state: { arr, left, right, mid, target, found: true, eliminated: [...eliminated] },
       });
       break;
     } else if (arr[mid] < target) {
       steps.push({
         description: `arr[${mid}]=${arr[mid]} < target(${target}). Target is in the RIGHT half. left = mid+1 = ${mid + 1}.`,
-        highlightLines: [13, 14],
+        highlightLines: [13, 14, 23, 24],
         state: { arr, left, right, mid, target, found: null, eliminated: [...eliminated] },
       });
       for (let i = left; i <= mid; i++) eliminated.push(i);
@@ -93,7 +93,7 @@ function buildSteps(arr: number[], target: number): Step<BSState>[] {
     } else {
       steps.push({
         description: `arr[${mid}]=${arr[mid]} > target(${target}). Target is in the LEFT half. right = mid-1 = ${mid - 1}.`,
-        highlightLines: [15, 16],
+        highlightLines: [15, 16, 23, 24],
         state: { arr, left, right, mid, target, found: null, eliminated: [...eliminated] },
       });
       for (let i = mid; i <= right; i++) eliminated.push(i);
